@@ -30,12 +30,12 @@ x = tf.placeholder(tf.float32, shape=[None, M])
 t = tf.placeholder(tf.float32, shape=[None, K])
 y = tf.nn.softmax(tf.matmul(x, W) + b)
 
-# cross_entropy = tf.reduce_mean(
-#     - tf.reduce_sum(t * tf.log(y), axis=1)
-# )
-cross_entropy = tf.reduce_sum(
+cross_entropy = tf.reduce_mean(
     - tf.reduce_sum(t * tf.log(y), axis=1)
 )
+# cross_entropy = tf.reduce_sum(
+#     - tf.reduce_sum(t * tf.log(y), axis=1)
+# )
 
 train_step = tf.train.GradientDescentOptimizer(0.1).minimize(cross_entropy)
 
