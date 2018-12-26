@@ -21,9 +21,10 @@ data_noise = 0.3
 
 M = 2
 K = 1
-H1 = 2
-Epoch_num = 20
+H1 = 3
+Epoch_num = 40
 minibatch_size = 20
+
 
 X, y = datasets.make_moons(N, noise=data_noise)
 # Y = y.reshape(N, 1)
