@@ -1,13 +1,18 @@
 from keras.layers import Dense, Activation
 from keras.models import Sequential
 from keras.optimizers import SGD
+import numpy as np
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+
 import tensorflow as tf
 from keras.backend.tensorflow_backend import set_session
+
 set_session(
     tf.Session(
         config=tf.ConfigProto(
             gpu_options=tf.GPUOptions(
-                visible_device_list="0", # (bad effect?)specify GPU number
+                visible_device_list="0",  # (bad effect?)specify GPU number
                 allow_growth=True
             ))))
 # config = tf.ConfigProto(
@@ -21,18 +26,17 @@ set_session(
 # set_session(tf.Session(config=config))
 
 
-import numpy as np
-from sklearn import datasets
-from sklearn.model_selection import train_test_split
-
 # intermediate work area
-N = 70000
+# np.random.seed(1234)
+
+N = 70000-1
 mnist = datasets.fetch_mldata('MNIST original', data_home='.')
 mnist_size = len(mnist.data)
 rnd_ind = np.random.permutation(range(mnist_size))[:N]
+# rnd_ind = np.random.permutation(range(mnist_size))[:mnist_size]
 Y_raw = mnist.target[rnd_ind]
 X = mnist.data[rnd_ind]
-Y = np.eye(10)[Y_raw.astype(int)]
+Y = np.eye(10)[Y_raw.astype(np.uint64)]
 
 # random dataset selection
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
@@ -45,7 +49,8 @@ hid_dim_lst = [200, 200, 200, 200]
 learning_rate = 0.01
 
 minibatch_size = 200
-epoch_size = 50
+epoch_size = 10
+
 
 # act_func = 'sigmoid'
 act_func = 'relu'
