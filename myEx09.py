@@ -26,6 +26,7 @@ Epoch_num = 40
 minibatch_size = 20
 
 
+
 X, y = datasets.make_moons(N, noise=data_noise)
 # Y = y.reshape(N, 1)
 
