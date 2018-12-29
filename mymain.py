@@ -1,4 +1,4 @@
-from header import *
+from myheader import *
 
 testMat = np.zeros(6).reshape(2, 3)
 

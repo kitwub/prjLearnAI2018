@@ -1,0 +1,30 @@
+usage: train.py [-h] [--batchsize BATCHSIZE] [--epoch EPOCH] [--gpu GPU]
+                [--out OUT] [--unit UNIT] [--vocab VOCAB] [--layer LAYER]
+                [--dropout DROPOUT] [--gradclip GRADCLIP]
+                [--train_file TRAIN_FILE] [--test_file TEST_FILE]
+                [--model MODEL]
+
+Document Classification Example
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --batchsize BATCHSIZE, -b BATCHSIZE
+                        Number of documents in each mini-batch
+  --epoch EPOCH, -e EPOCH
+                        Number of training epochs
+  --gpu GPU, -g GPU     GPU ID (negative value indicates CPU)
+  --out OUT, -o OUT     Directory to output the result
+  --unit UNIT, -u UNIT  Number of units
+  --vocab VOCAB, -v VOCAB
+                        Vocabulary size
+  --layer LAYER, -l LAYER
+                        Number of layers of LSMT
+  --dropout DROPOUT, -d DROPOUT
+                        Dropout rate
+  --gradclip GRADCLIP   Gradient clipping threshold
+  --train_file TRAIN_FILE, -train TRAIN_FILE
+                        Trainig data file.
+  --test_file TEST_FILE, -test TEST_FILE
+                        Test data file.
+  --model MODEL, -m MODEL
+                        read model parameters from npz file
