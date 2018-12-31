@@ -1,0 +1,6 @@
+train
+/mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU/data/train_w_NoReplace.csv
+test
+/mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU/data/test_w_NoReplace.csv
+model
+/mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU/sample_result_raw/snapshot_epoch-30

@@ -16,6 +16,7 @@ from nlp_utils import convert_seq
 import matplotlib
 matplotlib.use('Agg')
 
+
 def main():
     parser = argparse.ArgumentParser(
         description='Document Classification Example')
@@ -60,6 +61,7 @@ def main():
         while True:
             result = model(convert_seq(test_iter.next(), device=args.gpu, with_label=False))
             print(result)
+
 
 if __name__ == '__main__':
     main()

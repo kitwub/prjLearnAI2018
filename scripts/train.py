@@ -16,6 +16,7 @@ from nlp_utils import convert_seq
 import matplotlib
 matplotlib.use('Agg')
 
+
 def main():
     parser = argparse.ArgumentParser(
         description='Document Classification Example')
@@ -45,12 +46,12 @@ def main():
     args = parser.parse_args()
 
     train_val = data.DocDataset(args.train_file, vocab_size=args.vocab)
-    test = data.DocDataset(args.test_file, train_val.get_vocab())
+    # test = data.DocDataset(args.test_file, train_val.get_vocab())
     (train, valid) = split_dataset_random(train_val, 4000, seed=0)
 
     train_iter = iterators.SerialIterator(train, args.batchsize)
     valid_iter = iterators.SerialIterator(valid, args.batchsize, repeat=False, shuffle=False)
-    test_iter = iterators.SerialIterator(test, args.batchsize, repeat=False, shuffle=False)
+    # test_iter = iterators.SerialIterator(test, args.batchsize, repeat=False, shuffle=False)
 
     model = L.Classifier(nets.DocClassify(n_vocab=args.vocab+1, n_units=args.unit, n_layers=args.layer, n_out=4, dropout=args.dropout))
     if args.gpu >= 0:
@@ -77,6 +78,7 @@ def main():
         serializers.load_npz(args.model, trainer)
 
     trainer.run()
+
 
 if __name__ == '__main__':
     main()

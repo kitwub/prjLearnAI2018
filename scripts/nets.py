@@ -3,6 +3,7 @@ import chainer.functions as F
 import chainer.links as L
 import numpy as np
 
+
 # 文を文ベクトルに変換
 class SentRepRNN(chainer.Chain):
     def __init__(self, n_vocab=30000, n_units=200, n_layers=2, dropout=0.5):
@@ -21,11 +22,12 @@ class SentRepRNN(chainer.Chain):
 
     # 文を効率的に(一気に)embeddingするための関数
     def sequence_embed(self, xs):
-        x_len = [len(x) for x in xs]
+        x_len = [len(x) for x in xs]  #
         x_section = np.cumsum(x_len[:-1])
         ex = self.embed(F.concat(xs, axis=0))
         exs = F.split_axis(ex, x_section, 0)
         return exs
+
 
 # BiLSTMで文ベクトルを文書ベクトルに変換
 class DocRepRNN(chainer.Chain):
@@ -43,6 +45,7 @@ class DocRepRNN(chainer.Chain):
         # 最終層の各文の状態を平均したものを返す
         return [F.average(x, axis=0) for x in ys]
 
+
 # 与えられた文書の分類を行う 
 class DocClassify(chainer.Chain):
     def __init__(self, n_vocab=30000, n_units=200, n_layers=2, n_out=4, dropout=0.5):
@@ -59,4 +62,3 @@ class DocClassify(chainer.Chain):
         sent_rep = self.bn(sent_rep)
         # 出力層を噛ませる
         return self.out(sent_rep)
-

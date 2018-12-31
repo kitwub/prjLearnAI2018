@@ -3,6 +3,7 @@ import numpy as np
 import chainer
 from chainer import cuda
 
+
 def convert_seq(batch, device=None, with_label=True):
     def to_device_batch(batch, label=False):
         if device is None:

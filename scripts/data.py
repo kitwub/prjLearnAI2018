@@ -5,6 +5,7 @@ import numpy as np
 from collections import defaultdict
 UNK = 0
 
+
 class DocDataset(chainer.dataset.DatasetMixin):
     def __init__(self, fname, vocab=None, vocab_size=50000):
         self._fname = fname
