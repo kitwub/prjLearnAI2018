@@ -9,23 +9,23 @@ class SentRepRNN(chainer.Chain):
     def __init__(self, n_vocab=30000, n_units=200, n_layers=2, dropout=0.5):
         super(SentRepRNN, self).__init__()
         with self.init_scope():
-            self.embed = L.EmbedID(n_vocab, n_units)
+            self.embed = L.EmbedID(n_vocab, n_units)  # word embedding
             self.encoder = L.NStepLSTM(n_layers, n_units, n_units, dropout)
 
     def __call__(self, x):
         # 単語をembedding
-        emb = self.sequence_embed(x)
+        emb = self.sequence_embed(x)  # emb: 1ラベルの複数文を、分散表現ベクトルを単語数並べたVariableにembeddingし、タプルとしてまとめたもの。
         # 単語列を文ベクトルに変換
-        last_h, last_c, ys = self.encoder(None, None, emb)
+        last_h, last_c, ys = self.encoder(None, None, emb)  # 1ラベルの各文を、それぞれ1つの文ベクトルに変換
         # 最終層のhidden stateを返す
         return last_h[-1]
 
     # 文を効率的に(一気に)embeddingするための関数
     def sequence_embed(self, xs):
-        x_len = [len(x) for x in xs]  #
-        x_section = np.cumsum(x_len[:-1])
-        ex = self.embed(F.concat(xs, axis=0))
-        exs = F.split_axis(ex, x_section, 0)
+        x_len = [len(x) for x in xs]   # １ラベルの文章 [3, 5, 4, 7, ...]
+        x_section = np.cumsum(x_len[:-1])  # [3, 8, 12, 19, ...]
+        ex = self.embed(F.concat(xs, axis=0))  # ラベル内の各文をまっすぐ結合し分散表現に変換
+        exs = F.split_axis(ex, x_section, 0)  # x_selection の値をもとに再度、文ごとに分割
         return exs
 
 
@@ -39,7 +39,7 @@ class DocRepRNN(chainer.Chain):
 
     def __call__(self, x):
         # バッチ内の文書ごとに、各文をembedding (並列化するには???)
-        sent_rep = [self.sen_enc(doc) for doc in x]
+        sent_rep = [self.sen_enc(doc) for doc in x]  # x: バッチ, doc: １ラベルの複数文
         # 1文ずつBiLSTMに読み込む
         last_h, last_c, ys = self.encoder(None, None, sent_rep)
         # 最終層の各文の状態を平均したものを返す
@@ -57,8 +57,8 @@ class DocClassify(chainer.Chain):
 
     def __call__(self, x):
         # バッチ内の文書ごとに、各文をembedding
-        sent_rep = self.doc_enc(x)
+        sent_rep = self.doc_enc(x)  # x: ラベル文書 × ミニバッチサイズ
         sent_rep = F.concat([F.expand_dims(x, 0) for x in sent_rep], axis=0)
         sent_rep = self.bn(sent_rep)
         # 出力層を噛ませる
-        return self.out(sent_rep)
+        return self.out(sent_rep)  # 未実装時

@@ -13,6 +13,8 @@ import nets
 import data
 from nlp_utils import convert_seq
 
+import pickle
+
 import matplotlib
 matplotlib.use('Agg')
 
@@ -43,9 +45,17 @@ def main():
     parser.add_argument('--test_file', '-test', default='data/test.seg.csv',
                         help='Test data file.')
     parser.add_argument('--model', '-m', help='read model parameters from npz file')
+    parser.add_argument('--vocab_file', '-vf', default='/mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU/data/vocab_train_w_NoReplace.vocab_file',
+                        help='Vocabulary data file.')
     args = parser.parse_args()
 
     train_val = data.DocDataset(args.train_file, vocab_size=args.vocab)
+
+    if True:  # args.vocab_fileの存在確認(未作成の場合、新規作成)
+        with open(args.vocab_file, 'wb') as vocab_data_file:
+            pickle.dump(train_val, vocab_data_file)
+
+
     # test = data.DocDataset(args.test_file, train_val.get_vocab())
     (train, valid) = split_dataset_random(train_val, 4000, seed=0)
 
