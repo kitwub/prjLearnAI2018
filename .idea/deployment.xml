@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData">
+    <serverData>
+      <paths name="s18153@133.11.239.26:10022">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU" local="$PROJECT_DIR$" />
+          </mappings>
+          <excludedPaths>
+            <excludedPath path="/mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU/Data/" />
+            <excludedPath path="/mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU/mldata" />
+            <excludedPath path="/mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU/Archive" />
+            <excludedPath path="/mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU/sample_result" />
+            <excludedPath path="/mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU/sample_result_raw" />
+          </excludedPaths>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>
