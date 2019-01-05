@@ -1,3 +1,5 @@
+from datetime import datetime
+import os
 import sys
 import argparse
 
@@ -13,6 +15,7 @@ import numpy as np
 import nets
 import data
 from nlp_utils import convert_seq
+from my_utils import get_str_of_val_name_on_code
 
 import pickle
 
@@ -48,13 +51,19 @@ def main():
     parser.add_argument('--test_file', '-test', default='data/test.seg.csv',
                         help='Test data file.')
     parser.add_argument('--model', '-m', help='read model parameters from npz file')
+    parser.add_argument('--vcb_file',
+                        default='/mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU/data/vocab_train_w_NoReplace.vocab_file',
+                        help='Vocabulary data file.')
     args = parser.parse_args()
 
-    if True:  # args.vocab_fileの存在確認(作成済みの場合ロード)
-        with open(args.vocab_file, 'rb') as voccab_data_file:
-            train_val = pickle.load(voccab_data_file)
+    if os.path.exists(args.vcb_file):  # args.vocab_fileの存在確認(作成済みの場合ロード)
+        with open(args.vcb_file, 'rb') as f_vocab_data:
+            train_val = pickle.load(f_vocab_data)
     else:
         train_val = data.DocDataset(args.train_file, vocab_size=args.vocab)  # make vocab from training data
+        with open(args.vcb_file, 'wb') as f_vocab_save:
+            pickle.dump(train_val, f_vocab_save)
+
 
     # train_val = data.DocDataset(args.train_file, vocab_size=args.vocab)  # make vocab from training data
     # test = [x[0] for x in data.DocDataset(args.test_file, train_val.get_vocab())]  # [ データ１[文１[], 文２[], ...], データ２[文１[], 文２[], ...], ... ]
@@ -67,7 +76,7 @@ def main():
     test_label = [x[1] for x in test_doc_label]
     test_iter = iterators.SerialIterator(test_doc, args.batchsize, repeat=False, shuffle=False)
     test_label_iter = iterators.SerialIterator(test_label, args.batchsize, repeat=False, shuffle=False)
-    test_doc_label_iter = iterators.SerialIterator(test_doc_label, args.batchsize, repeat=False, shuffle=False)
+    # test_doc_label_iter = iterators.SerialIterator(test_doc_label, args.batchsize, repeat=False, shuffle=False)
 
     model = nets.DocClassify(n_vocab=args.vocab+1, n_units=args.unit, n_layers=args.layer, n_out=4, dropout=args.dropout)
     # load npzができなくなる→解消？
@@ -94,15 +103,22 @@ def main():
 
             for (each_label, each_predict) in zip(label_batch, predict):
                 confusion_mat[each_label][chainer.cuda.to_cpu(each_predict)] += 1
-            else:
-                print(confusion_mat)
 
     print(confusion_mat)
-    time_now = ''
-    save_path = '/mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU/data/vocab_train_w_NoReplace.saved_'
-    with open(save_path + time_now, 'wb') as f_save:
-        pickle.dump(Nothing, f_save)
 
+    # dummy_val = 'dummy data'
+
+    time_now = datetime.now().strftime('%Y%m%d%H%M%S')
+    save_path = '/mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU/data/vocab_train_w_NoReplace.saved_'
+    save_val_str = get_str_of_val_name_on_code(confusion_mat)[0]
+
+    # for (each_val, each_val_str) in zip(save_val, save_val_str):
+    #     with open(save_path + each_val_str + time_now, 'wb') as f_save:
+    #         pickle.dump(each_val, f_save)
+    with open(save_path + save_val_str + '_' + time_now, 'wb') as f_save:
+        pickle.dump(confusion_mat, f_save)
+
+    pass  # for breakpoint
 
 if __name__ == '__main__':
     main()

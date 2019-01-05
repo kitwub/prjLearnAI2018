@@ -1,3 +1,4 @@
+import os
 import sys
 import argparse
 
@@ -51,7 +52,7 @@ def main():
 
     train_val = data.DocDataset(args.train_file, vocab_size=args.vocab)
 
-    if True:  # args.vocab_fileの存在確認(未作成の場合、新規作成)
+    if os.path.exist(args.vocab_file):  # args.vocab_fileの存在確認(未作成の場合、新規作成)
         with open(args.vocab_file, 'wb') as vocab_data_file:
             pickle.dump(train_val, vocab_data_file)
 
