@@ -29,6 +29,15 @@ class SentRepRNN(chainer.Chain):
         return exs
 
 
+# 文を文ベクトルに変換 # note: ミニバッチから1ラベル分の複数文書に対して処理
+class SentRepBiRNN(SentRepRNN):
+    def __init__(self, n_vocab=30000, n_units=200, n_layers=2, dropout=0.5):
+        super(SentRepRNN, self).__init__()
+        with self.init_scope():
+            self.embed = L.EmbedID(n_vocab, n_units)  # word embedding（入力は単一のリスト)
+            self.encoder = L.NStepBiLSTM(n_layers, n_units, n_units, dropout) # (embed時と異なり、)ラベル内の各文ごとに文ベクトルを作成
+
+
 # BiLSTMで文ベクトルを文書ベクトルに変換 # ミニバッチのまま処理
 class DocRepRNN(chainer.Chain):
     def __init__(self, n_vocab=30000, n_units=200, n_layers=2, dropout=0.5):
@@ -46,7 +55,16 @@ class DocRepRNN(chainer.Chain):
         return [F.average(x, axis=0) for x in ys]
 
 
-# 与えられた文書の分類を行う 
+# BiLSTMで文ベクトルを文書ベクトルに変換 # ミニバッチのまま処理
+class DocRepBiRNN(DocRepRNN):
+    def __init__(self, n_vocab=30000, n_units=200, n_layers=2, dropout=0.5):
+        super(DocRepRNN, self).__init__()
+        with self.init_scope():
+            self.sen_enc = SentRepBiRNN(n_vocab, n_units, n_layers, dropout)
+            self.encoder = L.NStepBiLSTM(n_layers, n_units * 2, n_units * 2, dropout)
+
+
+# 与えられた文書の分類を行う
 class DocClassify(chainer.Chain):
     def __init__(self, n_vocab=30000, n_units=200, n_layers=2, n_out=4, dropout=0.5):
         super(DocClassify, self).__init__()
@@ -62,3 +80,13 @@ class DocClassify(chainer.Chain):
         sent_rep = self.bn(sent_rep)
         # 出力層を噛ませる
         return self.out(sent_rep)
+
+
+# 与えられた文書の分類を行う
+class DocClassifyBi(DocClassify):
+    def __init__(self, n_vocab=30000, n_units=200, n_layers=2, n_out=4, dropout=0.5):
+        super(DocClassify, self).__init__()
+        with self.init_scope():
+            self.doc_enc = DocRepBiRNN(n_vocab, n_units, n_layers, dropout)
+            self.bn = L.BatchNormalization(n_units * 4)
+            self.out = L.Linear(None, n_out)

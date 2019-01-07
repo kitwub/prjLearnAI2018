@@ -5,16 +5,20 @@ import warnings
 
 import chainer
 from chainer import training, Variable, iterators, optimizers, serializers
+from chainer.backends.cuda import get_device_from_id, to_cpu
 from chainer.training import extensions
 from chainer.datasets import split_dataset_random
 import chainer.links as L
+import chainer.cuda
 
 import numpy as np
 
 # import nets
-import nets_A
+# import nets_A
+import nets_B
 import data
 from nlp_utils import convert_seq
+from my_utils import *
 
 import pickle
 
@@ -23,6 +27,8 @@ matplotlib.use('Agg')
 
 
 def main():
+    set_random_seed(0)
+
     parser = argparse.ArgumentParser(
         description='Document Classification Example')
     parser.add_argument('--batchsize', '-b', type=int, default=64,
@@ -48,14 +54,17 @@ def main():
     parser.add_argument('--test_file', '-test', default='data/test.seg.csv',
                         help='Test data file.')
     parser.add_argument('--model', '-m', help='read model parameters from npz file')
-    parser.add_argument('--vcb_file', '-vf', default='/mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU/data/vocab_train_w_NoReplace.vocab_file',
+    parser.add_argument('--vcb_file', '-vf',
+                        default='/mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU/data/vocab_train_w_NoReplace.vocab_file',
                         help='Vocabulary data file.')
     parser.add_argument('--case', '-c', default='original',
                         help='Select NN Architecture.')
+    parser.add_argument('--opt', default='sgd',
+                        help='Select Optimizer.')
     parser.add_argument('--dbg_on', action='store_true',
                         help='No save, MiniTrain')
     args = parser.parse_args()
-
+    print(args)
     # train_val = data.DocDataset(args.train_file, vocab_size=args.vocab)
 
     if os.path.exists(args.vcb_file):  # args.vocab_fileの存在確認(作成済みの場合ロード)
@@ -69,39 +78,64 @@ def main():
             pickle.dump(train_val, f_vocab_save)
 
     if args.dbg_on:
-        train_val = train_val[:100]
+        len_train_data = len(train_val)
+        N = 2000
+        print('N', N)
+        rnd_ind = np.random.permutation(range(len_train_data))[:N]
+        train_val = train_val[rnd_ind]
 
-    # test = data.DocDataset(args.test_file, train_val.get_vocab())
-    (train, valid) = split_dataset_random(train_val, 4000 if not args.dbg_on else 90, seed=0)
-
+    (train, valid) = split_dataset_random(train_val, 4000 if not args.dbg_on else 1500, seed=0)
     train_iter = iterators.SerialIterator(train, args.batchsize)
     valid_iter = iterators.SerialIterator(valid, args.batchsize, repeat=False, shuffle=False)
+
+    # test = data.DocDataset(args.test_file, train_val.get_vocab())
     # test_iter = iterators.SerialIterator(test, args.batchsize, repeat=False, shuffle=False)
 
+    print('case', args.case)
     if args.case == 'original':
+        print('originalで実行されます')
         result_path = 'result/original'
-        model = L.Classifier(nets_A.DocClassify(n_vocab=args.vocab+1, n_units=args.unit, n_layers=args.layer, n_out=4, dropout=args.dropout))
+        model = L.Classifier(nets_B.DocClassify(
+            n_vocab=args.vocab+1, n_units=args.unit, n_layers=args.layer, n_out=4, dropout=args.dropout))
     elif args.case == 'bi':
+        print('biで実行されます')
         result_path = 'result/bi'
-        model = L.Classifier(nets_A.DocClassifyBi(n_vocab=args.vocab+1, n_units=args.unit, n_layers=args.layer, n_out=4, dropout=args.dropout))
+        model = L.Classifier(nets_B.DocClassifyBi(
+            n_vocab=args.vocab+1, n_units=args.unit, n_layers=args.layer, n_out=4, dropout=args.dropout))
+    elif args.case == 'bi2':
+        print('bi改良版')
+        result_path = 'result/bi2'
+        model = L.Classifier(
+            nets_B.DocClassifyBi2(n_vocab=args.vocab + 1, n_units=args.unit, n_layers=args.layer, n_out=4,
+                                  dropout=args.dropout))
     else:
         warnings.warn('指定したケースは存在しません。デフォルトで実行します')
         result_path = 'result/sample_result'
-        model = L.Classifier(nets_A.DocClassify(n_vocab=args.vocab+1, n_units=args.unit, n_layers=args.layer, n_out=4, dropout=args.dropout))
+        model = L.Classifier(nets_B.DocClassify(n_vocab=args.vocab+1, n_units=args.unit, n_layers=args.layer, n_out=4,
+                                                dropout=args.dropout))
 
-    # model = L.Classifier(nets.DocClassify(n_vocab=args.vocab+1, n_units=args.unit, n_layers=args.layer, n_out=4, dropout=args.dropout))
     if args.gpu >= 0:
         chainer.cuda.get_device_from_id(args.gpu).use()
+        # get_device_from_id(args.gpu).use()
         model.to_gpu()
 
-    optimizer = optimizers.SGD(lr=0.01)
+    if args.opt == 'sgd':
+        result_path += '_sgd'
+        print('SGD')
+        optimizer = optimizers.SGD(lr=0.01)
+    elif args.opt == 'adam':
+        result_path += '_adam'
+        print('Adam')
+        optimizer = optimizers.Adam()
+    else:
+        print('指定なしのためSGDで実行')
+        optimizer = optimizers.SGD(lr=0.01)
     optimizer.setup(model)
     optimizer.add_hook(chainer.optimizer.GradientClipping(args.gradclip))
+    # optimizer.add_hook(chainer.optimizer.Lasso(0.01))
 
     updater = training.StandardUpdater(train_iter, optimizer, converter=convert_seq, device=args.gpu)
 
-
-    # trainer = training.Trainer(updater, (args.epoch, 'epoch'), out='sample_result')
     trainer = training.Trainer(updater, (args.epoch, 'epoch'), out=result_path)
     trainer.extend(extensions.LogReport())
     if not args.dbg_on:

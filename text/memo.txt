@@ -1,0 +1,13 @@
+データセット一覧
+https://github.com/arXivTimes/arXivTimes/tree/master/datasets
+
+pngを表示する際はsshログイン後、displayコマンドで閲覧可能（&をつけてbackgroundで実行を推奨）
+
+stdout, stderrについて
+https://qiita.com/laikuaut/items/e1cc312ffc7ec2c872fc
+
+BiLSTMのタイムスタンプについて
+https://qiita.com/aonotas/items/8e38693fb517e4e90535
+・hyは多層の場合、偶数がForward、奇数がBackward
+・特定の位置の単語(タイム)に対する両方向の中間層の出力を取得する場合、
+  ysをスライス処理して、Backwardの部分を逆順にする必要がある

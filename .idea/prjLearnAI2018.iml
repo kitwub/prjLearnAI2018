@@ -9,6 +9,11 @@
     <orderEntry type="module" module-name="github_checkout_test" />
     <orderEntry type="library" name="R User Library" level="project" />
     <orderEntry type="library" name="R Skeletons" level="application" />
+    <orderEntry type="module" module-name="bert-chainer" />
+    <orderEntry type="module" module-name="attention_is_all_you_need" />
+    <orderEntry type="module" module-name="attention_is_all_you_need" />
+    <orderEntry type="module" module-name="attention_is_all_you_need" />
+    <orderEntry type="module" module-name="attention_is_all_you_need" />
   </component>
   <component name="PyDocumentationSettings">
     <option name="renderExternalDocumentation" value="true" />

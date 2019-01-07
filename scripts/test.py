@@ -88,8 +88,8 @@ def main():
         serializers.load_npz(args.model, model, 'updater/model:main/predictor/')
 
     confusion_mat = np.zeros([4, 4])  # [label, prediction]
-    # model2 = L.Classifier(nets.DocClassify(n_vocab=args.vocab+1, n_units=args.unit, n_layers=args.layer, n_out=4, dropout=args.dropout))
     with chainer.using_config('train', False):
+        # ChainerにインプリされたEvaluatorでモデル計算を実行できないかと試行したものだが結果は不明
         # test_eval = extensions.Evaluator(test_doc_label_iter, model, converter=convert_seq, device=args.gpu)
         # test_result = test_eval()
 

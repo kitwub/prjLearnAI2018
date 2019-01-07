@@ -1,0 +1,57 @@
+N 2000
+BiDirectionの平均を返却
+unit 200
+adam
+batch normalizationなし？
+
+ssh://s18153@133.11.239.26:10022/mnt/gold/users/s18153/venvs/Keras_venv3/bin/python -B -u /mnt/gold/users/s18153/.pycharm_helpers/pydev/pydevconsole.py --mode=server
+
+import sys; print('Python %s on %s' % (sys.version, sys.platform))
+sys.path.extend(['/mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU', 'D:\\WorkSpace\\PycharmProjects\\github_checkout_test', 'D:\\WorkSpace\\PycharmProjects\\attention_is_all_you_need', 'D:\\WorkSpace\\PycharmProjects\\bert-chainer', '/mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU/scripts', '/mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU'])
+
+PyDev console: starting.
+
+Python 3.5.2 (default, Nov 23 2017, 16:37:01)
+[GCC 5.4.0 20160609] on linux
+>>> import os
+... os.environ['CHAINER_CUDNN'] = '1'
+... os.environ['CHAINER_TYPE_CHECK'] = '0'
+... runfile('/mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU/scripts/train_B.py', args='--train_file /mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU/data/train_w_NoReplace.csv --test_file /mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU/data/test_w_NoReplace.csv --gpu 2 --case bi2 --dbg_on --unit 200 --dropout 0.4', wdir='/mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU')
+...
+N 2000
+/mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU/scripts/train_B.py:103: UserWarning: 未実装
+  warnings.warn('未実装')
+epoch       main/loss   main/accuracy  val/main/loss  val/main/accuracy  elapsed_time
+1           0.998321    0.607422       0.855235       0.709585           82.9177
+2           0.564175    0.79144        0.595437       0.779898           147.513
+3           0.265627    0.912109       0.555941       0.810096           216.516
+4           0.108474    0.970109       0.424357       0.867638           281.87
+5           0.0454683   0.988281       0.441387       0.844201           351.196
+6           0.00942142  1              0.478488       0.867188           416.192
+7           0.00289309  1              0.488408       0.871544           484.374
+8           0.00155746  1              0.53936        0.871094           553.767
+9           0.00107205  1              0.539709       0.875451           618.349
+10          0.000806257  1              0.553958       0.873047           685.536
+11          0.000649267  1              0.563567       0.875451           747.494
+12          0.000520719  1              0.573994       0.875451           814.885
+13          0.000434757  1              0.586411       0.875451           879.22
+14          0.000378402  1              0.594485       0.875451           947.106
+15          0.000326494  1              0.603134       0.875451           1026.96
+16          0.000253644  1              0.609199       0.875451           1094.98
+17          0.000242576  1              0.616599       0.875451           1162.1
+18          0.000209964  1              0.621886       0.875451           1224.83
+19          0.00018556  1              0.630674       0.875451           1291.48
+20          0.000173855  1              0.632417       0.875451           1357.24
+21          0.000153174  1              0.641854       0.875451           1424.46
+22          0.000139542  1              0.648882       0.877404           1489.49
+23          0.000126923  1              0.651463       0.877404           1557.27
+24          0.000114817  1              0.657717       0.879357           1620.86
+25          0.000107338  1              0.662911       0.879357           1685.29
+26          9.68554e-05  1              0.67011        0.879357           1753
+27          9.41536e-05  1              0.671253       0.879357           1817.6
+28          8.1234e-05  1              0.680314       0.877404           1887.67
+29          7.90539e-05  1              0.681109       0.879357           1953.94
+30          7.22377e-05  1              0.686065       0.879357           2020.95
+bash: line 1: 33136 Terminated              env "PYCHARM_MATPLOTLIB_PORT"="55821" "PYDEVD_LOAD_VALUES_ASYNC"="True" "IPYTHONENABLE"="True" "PYTHONPATH"="/mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU:D:/WorkSpace/PycharmProjects/github_checkout_test:D:/WorkSpace/PycharmProjects/attention_is_all_you_need:D:/WorkSpace/PycharmProjects/bert-chainer:/mnt/gold/users/s18153/prjPyCharm/prjNLP_GPU/scripts:/mnt/gold/users/s18153/.pycharm_helpers/pycharm_matplotlib_backend:/mnt/gold/users/s18153/.pycharm_helpers/third_party/thriftpy:/mnt/gold/users/s18153/.pycharm_helpers/pydev" "PYTHONUNBUFFERED"="1" "PYCHARM_HOSTED"="1" "PYCHARM_MATPLOTLIB_INDEX"="0" "PYCHARM_MATPLOTLIB_INTERACTIVE"="true" "JETBRAINS_REMOTE_RUN"="1" "PYTHONIOENCODING"="UTF-8" '/mnt/gold/users/s18153/venvs/Keras_venv3/bin/python' '-B' '-u' '/mnt/gold/users/s18153/.pycharm_helpers/pydev/pydevconsole.py' '--mode=server'
+
+Process finished with exit code 143

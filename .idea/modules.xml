@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../attention_is_all_you_need/.idea/attention_is_all_you_need.iml" filepath="$PROJECT_DIR$/../attention_is_all_you_need/.idea/attention_is_all_you_need.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../bert-chainer/.idea/bert-chainer.iml" filepath="$PROJECT_DIR$/../bert-chainer/.idea/bert-chainer.iml" />
       <module fileurl="file://$PROJECT_DIR$/../github_checkout_test/.idea/github_checkout_test.iml" filepath="$PROJECT_DIR$/../github_checkout_test/.idea/github_checkout_test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/prjLearnAI2018.iml" filepath="$PROJECT_DIR$/.idea/prjLearnAI2018.iml" />
     </modules>
