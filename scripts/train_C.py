@@ -15,7 +15,8 @@ import numpy as np
 
 # import nets
 # import nets_A
-import nets_B
+# import nets_B
+import nets_B_NoBN
 import data
 from nlp_utils import convert_seq
 from my_utils import *
@@ -79,13 +80,15 @@ def main():
 
     if args.dbg_on:
         len_train_data = len(train_val)
-        N = 1000
+        N = 100
         print('N', N)
         rnd_ind = np.random.permutation(range(len_train_data))[:N]
         train_val = train_val[rnd_ind]
-        (train, valid) = split_dataset_random(train_val, 800, seed=0)
+        (train, valid) = split_dataset_random(train_val, 80, seed=0)
     else:
         (train, valid) = split_dataset_random(train_val, 4000, seed=0)
+        print('train', len(train))
+        print('valid', len(valid))
 
     train_iter = iterators.SerialIterator(train, args.batchsize)
     valid_iter = iterators.SerialIterator(valid, args.batchsize, repeat=False, shuffle=False)
@@ -97,24 +100,24 @@ def main():
     if args.case == 'original':
         print('originalで実行されます')
         result_path = 'result/original'
-        model = L.Classifier(nets_B.DocClassify(
+        model = L.Classifier(nets_B_NoBN.DocClassify(
             n_vocab=args.vocab+1, n_units=args.unit, n_layers=args.layer, n_out=4, dropout=args.dropout))
     elif args.case == 'bi':
         print('biで実行されます')
         result_path = 'result/bi'
-        model = L.Classifier(nets_B.DocClassifyBi(
+        model = L.Classifier(nets_B_NoBN.DocClassifyBi(
             n_vocab=args.vocab+1, n_units=args.unit, n_layers=args.layer, n_out=4, dropout=args.dropout))
-    elif args.case == 'bi2' or args.case == 'bi_adam_2layer':
+    elif args.case == 'bi2' or args.case == 'bi_adam_2layer' or args.case == 'bi2_adam_nobn':
         print('bi改良版')
         result_path = 'result/bi2'
         model = L.Classifier(
-            nets_B.DocClassifyBi2(n_vocab=args.vocab + 1, n_units=args.unit, n_layers=args.layer, n_out=4,
-                                  dropout=args.dropout))
+            nets_B_NoBN.DocClassifyBi2(n_vocab=args.vocab + 1, n_units=args.unit, n_layers=args.layer, n_out=4,
+                                       dropout=args.dropout))
     else:
         warnings.warn('指定したケースは存在しません。デフォルトで実行します')
         result_path = 'result/sample_result'
-        model = L.Classifier(nets_B.DocClassify(n_vocab=args.vocab+1, n_units=args.unit, n_layers=args.layer, n_out=4,
-                                                dropout=args.dropout))
+        model = L.Classifier(nets_B_NoBN.DocClassify(n_vocab=args.vocab+1, n_units=args.unit, n_layers=args.layer,
+                                                     n_out=4, dropout=args.dropout))
 
     if args.gpu >= 0:
         chainer.cuda.get_device_from_id(args.gpu).use()
@@ -133,6 +136,10 @@ def main():
         result_path += '_adam_2layer'
         print('Adam')
         optimizer = optimizers.Adam()
+    elif args.opt == 'bi2_adam_nobn':
+        result_path += '_adam_nobn'
+        print('Adam')
+        optimizer = optimizers.Adam()
     else:
         print('指定なしのためSGDで実行')
         optimizer = optimizers.SGD(lr=0.01)
@@ -142,6 +149,7 @@ def main():
 
     updater = training.StandardUpdater(train_iter, optimizer, converter=convert_seq, device=args.gpu)
 
+    print('save here:', result_path)
     trainer = training.Trainer(updater, (args.epoch, 'epoch'), out=result_path)
     trainer.extend(extensions.LogReport())
     if not args.dbg_on:
